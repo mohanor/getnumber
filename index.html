@@ -20,7 +20,7 @@
             <div>
                 <div class="row">
                     <div class="col-12">
-                        <canvas id="can" class="can" style="border:2px solid;"></canvas>
+                        <canvas id="sig-canvas" class="can" style="border:2px solid;"></canvas>
                     </div>
                     <div class="col-12">
                         <img id="canvasimg" style="display:none;">
@@ -35,68 +35,110 @@
     </main>
 
 
+    <script>
+        var canvas = document.getElementById("sig-canvas");
+        var ctx = canvas.getContext("2d");
+        ctx.strokeStyle = "#222222";
+        ctx.lineWith = 2;
 
-    <script type="text/javascript">
-        var canvas, ctx, flag = false,
-            prevX = 0,
-            currX = 0,
-            prevY = 0,
-            currY = 0,
-            dot_flag = false;
-    
-        var x = "black",
-            y = 2;
+
+        var drawing = false;
+        var mousePos = { x:0, y:0 };
+        var lastPos = mousePos;
+        canvas.addEventListener("mousedown", function (e) {
+                drawing = true;
+                lastPos = getMousePos(canvas, e);
+        }, false);
+
+        canvas.addEventListener("mouseup", function (e) {
+            drawing = false;
+        }, false);
         
-        function init() {
-            canvas = document.getElementById('can');
-            ctx = canvas.getContext("2d");
-            w = canvas.width;
-            h = canvas.height;
-        
-            canvas.addEventListener("mousemove", function (e) {
-                findxy('move', e)
-            }, false);
-            canvas.addEventListener("mousedown", function (e) {
-                findxy('down', e)
-            }, false);
-            canvas.addEventListener("mouseup", function (e) {
-                findxy('up', e)
-            }, false);
-            canvas.addEventListener("mouseout", function (e) {
-                findxy('out', e)
-            }, false);
+        canvas.addEventListener("mousemove", function (e) {
+            mousePos = getMousePos(canvas, e);
+        }, false);
 
-
-
-            canvas.addEventListener("touchmove", function (e) {
-                findxy('move', e)
-            }, false);
-
-            canvas.addEventListener("touchstart", function (e) {
-                findxy('move', e)
-            }, false);
-
-           
-            canvas.addEventListener("touchend", function (e) {
-                findxy('move', e)
-            }, false);
-            canvas.addEventListener("touchcancel", function (e) {
-                findxy('move', e)
-            }, false);
-            
-
+        function getMousePos(canvasDom, mouseEvent) {
+        var rect = canvasDom.getBoundingClientRect();
+        return {
+            x: mouseEvent.clientX - rect.left,
+            y: mouseEvent.clientY - rect.top
+        };
         }
-        
-        function draw() {
-            ctx.beginPath();
-            ctx.moveTo(prevX, prevY);
-            ctx.lineTo(currX, currY);
-            ctx.strokeStyle = x;
-            ctx.lineWidth = y;
-            ctx.stroke();
-            ctx.closePath();
-        }
-        
+
+        window.requestAnimFrame = (function (callback) {
+        return window.requestAnimationFrame || 
+           window.webkitRequestAnimationFrame ||
+           window.mozRequestAnimationFrame ||
+           window.oRequestAnimationFrame ||
+           window.msRequestAnimaitonFrame ||
+           function (callback) {
+                window.setTimeout(callback, 1000/60);
+           };
+        })();
+
+        function renderCanvas() {
+  if (drawing) {
+    ctx.moveTo(lastPos.x, lastPos.y);
+    ctx.lineTo(mousePos.x, mousePos.y);
+    ctx.stroke();
+    lastPos = mousePos;
+  }
+}
+
+// Allow for animation
+(function drawLoop () {
+  requestAnimFrame(drawLoop);
+  renderCanvas();
+})();
+
+canvas.addEventListener("touchstart", function (e) {
+        mousePos = getTouchPos(canvas, e);
+  var touch = e.touches[0];
+  var mouseEvent = new MouseEvent("mousedown", {
+    clientX: touch.clientX,
+    clientY: touch.clientY
+  });
+  canvas.dispatchEvent(mouseEvent);
+}, false);
+canvas.addEventListener("touchend", function (e) {
+  var mouseEvent = new MouseEvent("mouseup", {});
+  canvas.dispatchEvent(mouseEvent);
+}, false);
+canvas.addEventListener("touchmove", function (e) {
+  var touch = e.touches[0];
+  var mouseEvent = new MouseEvent("mousemove", {
+    clientX: touch.clientX,
+    clientY: touch.clientY
+  });
+  canvas.dispatchEvent(mouseEvent);
+}, false);
+
+// Get the position of a touch relative to the canvas
+function getTouchPos(canvasDom, touchEvent) {
+  var rect = canvasDom.getBoundingClientRect();
+  return {
+    x: touchEvent.touches[0].clientX - rect.left,
+    y: touchEvent.touches[0].clientY - rect.top
+  };
+}
+
+document.body.addEventListener("touchstart", function (e) {
+  if (e.target == canvas) {
+    e.preventDefault();
+  }
+}, false);
+document.body.addEventListener("touchend", function (e) {
+  if (e.target == canvas) {
+    e.preventDefault();
+  }
+}, false);
+document.body.addEventListener("touchmove", function (e) {
+  if (e.target == canvas) {
+    e.preventDefault();
+  }
+}, false);
+
         function erase() {
             var m = confirm("Want to clear");
             if (m) {
@@ -111,37 +153,7 @@
             document.getElementById("canvasimg").src = dataURL;
             document.getElementById("canvasimg").style.display = "inline";
         }
-        
-        function findxy(res, e) {
-            if (res == 'down') {
-                prevX = currX;
-                prevY = currY;
-                currX = e.clientX - canvas.offsetLeft;
-                currY = e.clientY - canvas.offsetTop;
-        
-                flag = true;
-                dot_flag = true;
-                if (dot_flag) {
-                    ctx.beginPath();
-                    ctx.fillStyle = x;
-                    ctx.fillRect(currX, currY, 2, 2);
-                    ctx.closePath();
-                    dot_flag = false;
-                }
-            }
-            if (res == 'up' || res == "out") {
-                flag = false;
-            }
-            if (res == 'move') {
-                if (flag) {
-                    prevX = currX;
-                    prevY = currY;
-                    currX = e.clientX - canvas.offsetLeft;
-                    currY = e.clientY - canvas.offsetTop;
-                    draw();
-                }
-            }
-        }
+
         </script>
 </body>
 </html>

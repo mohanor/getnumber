@@ -5,4 +5,5 @@
 .can {
     max-width: 100%;
     height: auto;
+    touch-action: none;
 }
