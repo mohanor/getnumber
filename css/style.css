@@ -1,3 +1,8 @@
 * {
     font-family: 'Cairo', sans-serif;
 }
+
+.can {
+    max-width: 100%;
+    height: auto;
+}
