@@ -9,16 +9,14 @@ html {
 }
 
 body {
-    overflow: hidden;
+    overflow-x: hidden;
     background-color: #FFC4E1;
 }
 
 main {
     width: calc(100% - 40px);
     margin: 0 auto;
-    height: 100vh;
-    display: grid;
-    place-content: center;
+    padding-top: 130px;
 }
 
 .mb2 {
@@ -64,7 +62,9 @@ li, a {
 
 li {
     width: 230px;
-    text-indent: 56px;}
+    text-indent: 56px;
+}
+
 a:focus {
     display: block;
     color: #333;

@@ -13,3 +13,12 @@
     }
 
   }
+
+@media screen and (min-height: 850px) {
+    main {
+        padding-top: 0;
+        display: grid;
+        place-content: center;
+        height: 100vh;
+    }
+}
