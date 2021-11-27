@@ -10,19 +10,20 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./css/bootstrap.min.css">
     <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/responsive.css">
 </head>
 <body>
-    <main class="container">
+    <main>
         <div class="text-center">
             <div>
                 <h3>اضغط هنا</h3>
             </div>
             <div>
-                <div class="row">
-                    <div class="col-12">
+                <div>
+                    <div>
                         <canvas id="sig-canvas" class="can" style="box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;"></canvas>
                     </div>
-                    <div class="col-12">
+                    <div>
                         <img id="canvasimg" style="display:none;">
                     </div>
                 </div>
@@ -41,7 +42,12 @@
 
     <script>
         var canvas = document.getElementById("sig-canvas");
-        canvas.width = window.innerWidth / 2;
+
+        if (window.innerWidth <= 768)
+            canvas.width = window.innerWidth - 40;
+        else
+            canvas.width = window.innerWidth / 2;
+
         canvas.height = 500;
         var ctx = canvas.getContext("2d");
         ctx.lineWidth = 4;
