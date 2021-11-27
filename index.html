@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="./css/bootstrap.min.css">
     <link rel="stylesheet" href="./css/style.css">
 </head>
-<body onload="init()">
+<body>
     <main class="container">
         <div class="text-center">
             <div>
@@ -20,15 +20,19 @@
             <div>
                 <div class="row">
                     <div class="col-12">
-                        <canvas id="sig-canvas" class="can" style="border:2px solid;"></canvas>
+                        <canvas id="sig-canvas" class="can" width="500px" height="500px" style="box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;"></canvas>
                     </div>
                     <div class="col-12">
                         <img id="canvasimg" style="display:none;">
                     </div>
                 </div>
-                <div class="mt-4">
-                    <input type="button" value="save" id="btn" size="30" onclick="save()">
-                    <input type="button" value="clear" id="clr" size="23" onclick="erase()">
+                <div class="mt-4 d-flex justify-content-between">
+                    <div class="w-50 mr2">
+                        <input type="button" value="save" id="btn" size="30" class="btn btn-primary w-100" onclick="save()">
+                    </div>
+                    <div class="w-50">
+                        <input type="button" value="clear" id="clr" size="23" class="btn btn-warning w-100" onclick="erase()">
+                    </div>
                 </div>
             </div>   
         </div>
@@ -37,10 +41,25 @@
 
     <script>
         var canvas = document.getElementById("sig-canvas");
+        
         var ctx = canvas.getContext("2d");
-        ctx.strokeStyle = "#222222";
-        ctx.lineWith = 2;
+        ctx.lineWidth = 4;
+        ctx.strokeStyle = "black";
 
+        function erase() {
+            var m = confirm("Want to clear");
+            if (m) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                document.getElementById("canvasimg").style.display = "none";
+            }
+        }
+        
+        function save() {
+            document.getElementById("canvasimg").style.border = "2px solid";
+            var dataURL = canvas.toDataURL();
+            document.getElementById("canvasimg").src = dataURL;
+            document.getElementById("canvasimg").style.display = "inline";
+        }
 
         var drawing = false;
         var mousePos = { x:0, y:0 };
@@ -78,81 +97,71 @@
         })();
 
         function renderCanvas() {
-  if (drawing) {
-    ctx.moveTo(lastPos.x, lastPos.y);
-    ctx.lineTo(mousePos.x, mousePos.y);
-    ctx.stroke();
-    lastPos = mousePos;
-  }
-}
-
-// Allow for animation
-(function drawLoop () {
-  requestAnimFrame(drawLoop);
-  renderCanvas();
-})();
-
-canvas.addEventListener("touchstart", function (e) {
-        mousePos = getTouchPos(canvas, e);
-  var touch = e.touches[0];
-  var mouseEvent = new MouseEvent("mousedown", {
-    clientX: touch.clientX,
-    clientY: touch.clientY
-  });
-  canvas.dispatchEvent(mouseEvent);
-}, false);
-canvas.addEventListener("touchend", function (e) {
-  var mouseEvent = new MouseEvent("mouseup", {});
-  canvas.dispatchEvent(mouseEvent);
-}, false);
-canvas.addEventListener("touchmove", function (e) {
-  var touch = e.touches[0];
-  var mouseEvent = new MouseEvent("mousemove", {
-    clientX: touch.clientX,
-    clientY: touch.clientY
-  });
-  canvas.dispatchEvent(mouseEvent);
-}, false);
-
-// Get the position of a touch relative to the canvas
-function getTouchPos(canvasDom, touchEvent) {
-  var rect = canvasDom.getBoundingClientRect();
-  return {
-    x: touchEvent.touches[0].clientX - rect.left,
-    y: touchEvent.touches[0].clientY - rect.top
-  };
-}
-
-document.body.addEventListener("touchstart", function (e) {
-  if (e.target == canvas) {
-    e.preventDefault();
-  }
-}, false);
-document.body.addEventListener("touchend", function (e) {
-  if (e.target == canvas) {
-    e.preventDefault();
-  }
-}, false);
-document.body.addEventListener("touchmove", function (e) {
-  if (e.target == canvas) {
-    e.preventDefault();
-  }
-}, false);
-
-        function erase() {
-            var m = confirm("Want to clear");
-            if (m) {
-                ctx.clearRect(0, 0, w, h);
-                document.getElementById("canvasimg").style.display = "none";
+            if (drawing) {
+                ctx.beginPath();
+                ctx.moveTo(lastPos.x, lastPos.y);
+                ctx.lineCap = 'round';
+                ctx.lineTo(mousePos.x, mousePos.y);
+                ctx.stroke();
+                lastPos = mousePos;
+                ctx.closePath();
             }
         }
+
+        (function drawLoop () {
+            requestAnimFrame(drawLoop);
+            renderCanvas();
+        })();
+
+        canvas.addEventListener("touchstart", function (e) {
+                mousePos = getTouchPos(canvas, e);
+        var touch = e.touches[0];
+        var mouseEvent = new MouseEvent("mousedown", {
+            clientX: touch.clientX,
+            clientY: touch.clientY
+        });
         
-        function save() {
-            document.getElementById("canvasimg").style.border = "2px solid";
-            var dataURL = canvas.toDataURL();
-            document.getElementById("canvasimg").src = dataURL;
-            document.getElementById("canvasimg").style.display = "inline";
+        canvas.dispatchEvent(mouseEvent);
+        }, false);
+
+        canvas.addEventListener("touchend", function (e) {
+            var mouseEvent = new MouseEvent("mouseup", {});
+            canvas.dispatchEvent(mouseEvent);
+        }, false);
+
+        canvas.addEventListener("touchmove", function (e) {
+            var touch = e.touches[0];
+            var mouseEvent = new MouseEvent("mousemove", {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            canvas.dispatchEvent(mouseEvent);
+        }, false);
+
+
+        function getTouchPos(canvasDom, touchEvent) {
+            var rect = canvasDom.getBoundingClientRect();
+            return {
+                x: touchEvent.touches[0].clientX - rect.left,
+                y: touchEvent.touches[0].clientY - rect.top
+            };
         }
+
+        document.body.addEventListener("touchstart", function (e) {
+            if (e.target == canvas) {
+                e.preventDefault();
+            }
+        }, false);
+        document.body.addEventListener("touchend", function (e) {
+            if (e.target == canvas) {
+                e.preventDefault();
+            }
+        }, false);
+        document.body.addEventListener("touchmove", function (e) {
+            if (e.target == canvas) {
+                e.preventDefault();
+            }
+        }, false);
 
         </script>
 </body>
