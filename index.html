@@ -20,17 +20,17 @@
             <div>
                 <div class="row">
                     <div class="col-12">
-                        <canvas id="sig-canvas" class="can" width="500px" height="500px" style="box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;"></canvas>
+                        <canvas id="sig-canvas" class="can" style="box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;"></canvas>
                     </div>
                     <div class="col-12">
                         <img id="canvasimg" style="display:none;">
                     </div>
                 </div>
-                <div class="mt-4 d-flex justify-content-between">
-                    <div class="w-50 mr2">
+                <div class="mt-4">
+                    <div class="mb2">
                         <input type="button" value="save" id="btn" size="30" class="btn btn-primary w-100" onclick="save()">
                     </div>
-                    <div class="w-50">
+                    <div>
                         <input type="button" value="clear" id="clr" size="23" class="btn btn-warning w-100" onclick="erase()">
                     </div>
                 </div>
@@ -41,7 +41,8 @@
 
     <script>
         var canvas = document.getElementById("sig-canvas");
-        
+        canvas.width = window.innerWidth / 2;
+        canvas.height = 500;
         var ctx = canvas.getContext("2d");
         ctx.lineWidth = 4;
         ctx.strokeStyle = "black";
