@@ -8,7 +8,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./css/bootstrap.min.css">
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="./css/responsive.css">
 </head>
@@ -26,6 +25,8 @@
         <li><a href="#">تواصل معنا</a></li>
     </ul>
 
+    <button id='runaway-btn' class="hhhhhh">اضغط هنا &#129315;</button>
+
     <main>
         <div class="text-center">
             <div>
@@ -37,12 +38,12 @@
                         <canvas id="sig-canvas" class="can" style="box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;"></canvas>
                     </div>
                     <div>
-                        <img id="canvasimg" style="display:none;">
+                        <img id="canvasimg" style="display:none; width: 100%;">
                     </div>
                 </div>
                 <div class="mt-4">
                     <div class="mb2">
-                        <input type="button" value="save" id="btn" size="30" class="btn btn-primary w-100" onclick="save()">
+                        <input type="button" value="اضغط هنا" id="btn" size="30" class="btn btn-primary w-100" onclick="save()">
                     </div>
                     <div>
                         <input type="button" value="clear" id="clr" size="23" class="btn btn-warning w-100" onclick="erase()">
@@ -51,32 +52,56 @@
             </div>   
         </div>
     </main>
-
-
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.0/anime.min.js"></script>
     <script>
         var canvas = document.getElementById("sig-canvas");
 
-        if (window.innerWidth <= 768)
-            canvas.width = window.innerWidth - 40;
-        else
-            canvas.width = window.innerWidth / 2;
-
+        function reportWindowSize() {
+            if (window.innerWidth <= 768)
+                canvas.width = window.innerWidth - 55;
+            else
+                canvas.width = window.innerWidth / 2 - 10;
+            whiteBg();
+        }
         canvas.height = 500;
         var ctx = canvas.getContext("2d");
-        ctx.lineWidth = 4;
+        
         ctx.strokeStyle = "black";
+       
+        reportWindowSize();
+        window.onresize = reportWindowSize;
+       
+        function whiteBg()
+        {
+            var imgData=ctx.getImageData(0,0,canvas.width,canvas.height);
+            var data=imgData.data;
+            for(var i = 0;i < data.length; i+=4){
+                if(data[i+3] < 255){
+                    data[i] = 255;
+                    data[i+1] = 255;
+                    data[i+2] = 255;
+                    data[i+3] = 255;
+                }
+            }
+            ctx.putImageData(imgData,0,0);
+        }
 
+        whiteBg();
         function erase() {
             var m = confirm("Want to clear");
             if (m) {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 document.getElementById("canvasimg").style.display = "none";
             }
+
+            whiteBg();
         }
         
         function save() {
             document.getElementById("canvasimg").style.border = "2px solid";
-            var dataURL = canvas.toDataURL();
+            
+            var dataURL = canvas.toDataURL("image/jpeg");
             document.getElementById("canvasimg").src = dataURL;
             document.getElementById("canvasimg").style.display = "inline";
         }
@@ -124,6 +149,7 @@
                 ctx.lineTo(mousePos.x, mousePos.y);
                 ctx.stroke();
                 lastPos = mousePos;
+                ctx.lineWidth = 5;
                 ctx.closePath();
             }
         }
@@ -182,6 +208,32 @@
                 e.preventDefault();
             }
         }, false);
+
+        </script>
+
+        <script>
+            const button = document.getElementById("runaway-btn");
+
+            const animateMove = (element, prop, pixels) =>
+            anime({
+                targets: element,
+                [prop]: `${pixels}px`,
+                easing: "easeOutCirc"
+            });
+
+            ["mouseover", "click"].forEach(function (el) {
+            button.addEventListener(el, function (event) {
+                const top = getRandomNumber(window.innerHeight - this.offsetHeight);
+                const left = getRandomNumber(window.innerWidth - this.offsetWidth);
+
+                animateMove(this, "left", left).play();
+                animateMove(this, "top", top).play();
+            });
+            });
+
+            const getRandomNumber = (num) => {
+            return Math.floor(Math.random() * (num + 1));
+            };
 
         </script>
 </body>
