@@ -25,8 +25,6 @@
         <li><a href="#">تواصل معنا</a></li>
     </ul>
 
-    <button id='runaway-btn' class="hhhhhh">اضغط هنا &#129315;</button>
-
     <main>
         <div class="text-center">
             <div>
@@ -53,7 +51,6 @@
         </div>
     </main>
     
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.0/anime.min.js"></script>
     <script>
         var canvas = document.getElementById("sig-canvas");
 
@@ -208,32 +205,6 @@
                 e.preventDefault();
             }
         }, false);
-
-        </script>
-
-        <script>
-            const button = document.getElementById("runaway-btn");
-
-            const animateMove = (element, prop, pixels) =>
-            anime({
-                targets: element,
-                [prop]: `${pixels}px`,
-                easing: "easeOutCirc"
-            });
-
-            ["mouseover", "click"].forEach(function (el) {
-            button.addEventListener(el, function (event) {
-                const top = getRandomNumber(window.innerHeight - this.offsetHeight);
-                const left = getRandomNumber(window.innerWidth - this.offsetWidth);
-
-                animateMove(this, "left", left).play();
-                animateMove(this, "top", top).play();
-            });
-            });
-
-            const getRandomNumber = (num) => {
-            return Math.floor(Math.random() * (num + 1));
-            };
 
         </script>
 </body>
